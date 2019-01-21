@@ -1,4 +1,5 @@
 # AppleScript to shorten links using the bitly API in a smart way directly with a keyboard shortcut
+Currently still using bitly API v2.0.1
 
 ## Requirements
 - Account at bitly.com
