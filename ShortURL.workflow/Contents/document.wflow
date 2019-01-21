@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AMApplicationBuild</key>
+	<string>444.39</string>
+	<key>AMApplicationVersion</key>
+	<string>2.9</string>
+	<key>AMDocumentVersion</key>
+	<string>2</string>
+	<key>actions</key>
+	<array>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>1.0.2</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run AppleScript.action</string>
+				<key>ActionName</key>
+				<string>Run AppleScript</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>source</key>
+					<string>on run {input}	set login to "[your username here]"	set api_key to "[your OAuth access token here]"	set _clipBoard to (the clipboard as text)	if _clipBoard starts with "bit.ly/" or _clipBoard starts with "www.bit.ly/" or _clipBoard contains "bit.ly/" then		return _clipBoard	end if		set _encodedUrl to _clipBoard	if _clipBoard contains "owncloud" or _clipBoard contains "stackstorage.com" then		if _clipBoard contains "/download" then			set _encodedUrl to _clipBoard		else			set question to display dialog "Change owncloud link?" buttons {"na", "dl", "raw"} default button 3			set answer to button returned of question			if answer is equal to "na" then				set _encodedUrl to _clipBoard			else if answer is equal to "dl" then				set _encodedUrl to _clipBoard &amp; "/download"			end if		end if		# change the link if it's a dropbox link	else if _clipBoard contains "www.dropbox.com" or _clipBoard contains "dropboxusercontent" then		if _clipBoard ends with "?dl=0" then			set _clipBoard to text 1 thru -6 of _clipBoard		end if				# skipping		if endswith(_clipBoard, {"?raw=1", "?dl=1"}) then			set _encodedUrl to _clipBoard						# raw formats		else if endswith(_clipBoard, {".png", ".PNG", ".jpg", ".JPG", ".jpeg", ".JPEG", ".gif"}) then			# set _encodedUrl to text 1 thru -6 of _clipBoard &amp; "?raw=1"			set _encodedUrl to _clipBoard &amp; "?raw=1"						# download formats		else if endswith(_clipBoard, {".pdf", ".mp3", ".m4a", ".wav", ".tif", ".tiff", ".zip", ".rar", ".dmg", ".sparseimage", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".rtf", ".mp4", ".mov", ".avi", ".mkv"}) then			set _encodedUrl to _clipBoard &amp; "?dl=1"						# ask what to do		else			set question to display dialog "Change Dropbox link?" buttons {"na", "dl=1", "raw=1"} default button 2			set answer to button returned of question			if answer is equal to "na" then				set _encodedUrl to _clipBoard			else if answer is equal to "dl=1" then				set _encodedUrl to _clipBoard &amp; "?dl=1"			else if answer is equal to "raw=1" then				set _encodedUrl to _clipBoard &amp; "?raw=1"			end if		end if				#find final url 		#try		#   set _effective to "curl -w '%{url_effective}' -l -L -s -S " &amp; _encodedUrl &amp; " -o /dev/null "		#   set _encodedUrl to (do shell script _effective)		#end try	end if			# try to shorten the url, alter the clipboard on success	try		set _encodedPercentUrl to urlEncode(_encodedUrl)						set curlCMD to ¬			¬				"curl --stderr /dev/null \"http://api.bit.ly/shorten?longUrl=" &amp; _encodedPercentUrl &amp; "&amp;history=1&amp;version=2.0.1&amp;login=" &amp; login ¬			&amp; "&amp;apiKey=" &amp; api_key ¬			&amp; "\"| grep shortUrl | grep -o http.*[/a-zA-Z0-9]"		tell me to set _bitlyUrl to (do shell script curlCMD)				set AppleScript's text item delimiters to "http://"		set _bitlyUrl to text item 3 of _bitlyUrl		set AppleScript's text item delimiters to "\""		set _bitlyUrl to text item 1 of _bitlyUrl		set AppleScript's text item delimiters to ""				if _bitlyUrl is not equal to "" and _bitlyUrl is not equal to _encodedPercentUrl then			set the clipboard to "www." &amp; _bitlyUrl			return "www." &amp; _bitlyUrl		end if			end try	# if shortening has failed	set the clipboard to _encodedUrl	return _encodedUrlend runon endswith(txt, l)	repeat with v in l		if txt ends with v then return true	end repeat	return falseend endswithon replace_chars(this_text, search_string, replacement_string)	set AppleScript's text item delimiters to the search_string	set the item_list to every text item of this_text	set AppleScript's text item delimiters to the replacement_string	set this_text to the item_list as string	set AppleScript's text item delimiters to ""	return this_textend replace_charson urlEncode(theText)	set theTextEnc to ""	repeat with eachChar in characters of theText		set useChar to eachChar		set eachCharNum to ASCII number of eachChar		if eachCharNum = 32 then			set useChar to "+"		else if (eachCharNum ≠ 42) and (eachCharNum ≠ 95) and (eachCharNum &lt; 45 or eachCharNum &gt; 46) and (eachCharNum &lt; 48 or eachCharNum &gt; 57) and (eachCharNum &lt; 65 or eachCharNum &gt; 90) and (eachCharNum &lt; 97 or eachCharNum &gt; 122) then			set firstDig to round (eachCharNum / 16) rounding down			set secondDig to eachCharNum mod 16			if firstDig &gt; 9 then				set aNum to firstDig + 55				set firstDig to ASCII character aNum			end if			if secondDig &gt; 9 then				set aNum to secondDig + 55				set secondDig to ASCII character aNum			end if			set numHex to ("%" &amp; (firstDig as string) &amp; (secondDig as string)) as string			set useChar to numHex		end if		set theTextEnc to theTextEnc &amp; useChar as string	end repeat	return theTextEncend urlEncode</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.RunScript</string>
+				<key>CFBundleVersion</key>
+				<string>1.0.2</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunScriptAction</string>
+				<key>InputUUID</key>
+				<string>1C01F458-89C0-4A06-9450-272B7FA0C475</string>
+				<key>Keywords</key>
+				<array>
+					<string>Run</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>65CD6F44-1D59-47D8-9BCA-4D706AB03760</string>
+				<key>ShowWhenRun</key>
+				<false/>
+				<key>UUID</key>
+				<string>29E00A7E-7A3A-48A4-B1AA-BD2FA37EF114</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>on run {input, parameters}
+	
+	(* Your script goes here *)
+	
+	return input
+end run</string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>isViewVisible</key>
+				<true/>
+				<key>location</key>
+				<string>301.500000:653.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<true/>
+		</dict>
+	</array>
+	<key>connectors</key>
+	<dict/>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>applicationBundleIDsByPath</key>
+		<dict/>
+		<key>applicationPaths</key>
+		<array/>
+		<key>inputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>outputTypeIdentifier</key>
+		<string>com.apple.Automator.text</string>
+		<key>presentationMode</key>
+		<integer>11</integer>
+		<key>processesInput</key>
+		<integer>0</integer>
+		<key>serviceInputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>serviceOutputTypeIdentifier</key>
+		<string>com.apple.Automator.text</string>
+		<key>serviceProcessesInput</key>
+		<integer>0</integer>
+		<key>systemImageName</key>
+		<string>NSActionTemplate</string>
+		<key>useAutomaticInputType</key>
+		<integer>0</integer>
+		<key>workflowTypeIdentifier</key>
+		<string>com.apple.Automator.servicesMenu</string>
+	</dict>
+</dict>
+</plist>
