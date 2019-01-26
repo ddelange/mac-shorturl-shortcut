@@ -13,7 +13,7 @@ Currently still using bitly API v2.0.1
 - (optional) Dropbox app
 
 ## Installation
-- Copy the script over:
+- Copy and open the script:
 ```bash
 git clone https://github.com/ddelange/mac-smart-bitly-shortcut.git ~/git/mac-smart-bitly-shortcut
 cp -r ~/git/mac-smart-bitly-shortcut/ShortURL.workflow ~/Library/Services
