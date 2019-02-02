@@ -15,8 +15,8 @@ Currently still using bitly API v2.0.1
 ## Installation
 - Copy and open the script:
 ```bash
-git clone https://github.com/ddelange/mac-smart-bitly-shortcut.git ~/git/mac-smart-bitly-shortcut
-cp -r ~/git/mac-smart-bitly-shortcut/ShortURL.workflow ~/Library/Services
+git clone https://github.com/ddelange/mac-shorturl-shortcut.git ~/git/mac-shorturl-shortcut
+cp -r ~/git/mac-shorturl-shortcut/ShortURL.workflow ~/Library/Services
 open ~/Library/Services/ShortURL.workflow
 ```
 - Fill in your bitly username & [Generic Access Token](https://bitly.com/a/oauth_apps)
