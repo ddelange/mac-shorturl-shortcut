@@ -8,7 +8,7 @@ Currently still using bitly API v2.0.1
 ![screenshotshorten](https://user-images.githubusercontent.com/14880945/51790920-b44b6c00-219b-11e9-9d93-57f8717bd33c.gif)
 
 ## Requirements
-- Account at bitly.com
+- Account at [bitly.com](bitly.com)
 - Mac running OS X 10.7+
 - (optional) Dropbox app
 
@@ -19,7 +19,7 @@ git clone https://github.com/ddelange/mac-smart-bitly-shortcut.git ~/git/mac-sma
 cp -r ~/git/mac-smart-bitly-shortcut/ShortURL.workflow ~/Library/Services
 open ~/Library/Services/ShortURL.workflow
 ```
-- Fill in your bitly credentials
+- Fill in your bitly username & [Generic Access Token](https://bitly.com/a/oauth_apps)
 - Set your preferred shortcut under `System Preferences/Keyboard/Services/Text/ShortURL` (I like ⌃⌥⌘V)
 - (optional) Setup Dropbox direct-link screen shot sharing
   - Tick `Share screenshots using Dropbox` in the `Import` tab of Dropbox preferences
